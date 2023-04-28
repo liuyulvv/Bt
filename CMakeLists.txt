@@ -43,6 +43,8 @@ file(GLOB_RECURSE SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_S
 
 include_directories(
     "include"
+    "include/graphics"
+    "include/graphics/vulkan"
     "glm"
     ${Vulkan_INCLUDE_DIRS}
 )
