@@ -11,10 +11,40 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS /utf-8)
 
+set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(NOT ${IS_DEBUG_BUILD})
+    add_compile_definitions(NOT_DEBUG)
+endif()
+
+# glm
+add_subdirectory(glm)
+
+# Vulkan
+set(Vulkan_SDK "D:/VulkanSDK/1.3.236.0")
+find_package(Vulkan REQUIRED COMPONENTS glslc)
+find_program(glslc_executable NAMES glslc HINTS Vulkan::glslc)
+file(GLOB shaders ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vert ${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.frag)
+foreach(shader IN LISTS shaders)
+    get_filename_component(filename ${shader} NAME ABSOLUTE)
+    add_custom_command(
+        COMMAND
+        ${glslc_executable}
+        -o ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${filename}.spv
+        ${shader}
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${filename}.spv
+        DEPENDS ${shader} ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+        COMMENT "Compiling ${filename}"
+    )
+    list(APPEND spv_shaders ${CMAKE_CURRENT_SOURCE_DIR}/shaders/${filename}.spv)
+endforeach()
+add_custom_target(shaders ALL DEPENDS ${spv_shaders})
+
 file(GLOB_RECURSE SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 include_directories(
     "include"
+    "glm"
+    ${Vulkan_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -27,6 +57,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStart
 
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE
+    ${Vulkan_LIBRARIES}
 )
 
 target_compile_options(
