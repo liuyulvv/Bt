@@ -13,32 +13,32 @@
 BApplication::BApplication() {
 #if defined(_WIN32)
     auto instance = GetModuleHandle(nullptr);
-    WNDCLASS windowClass{};
-    windowClass.lpfnWndProc = eventProcess;
-    windowClass.hInstance = instance;
-    windowClass.lpszClassName = B_CLASS_NAME;
-    RegisterClass(&windowClass);
+    WNDCLASS window_class{};
+    window_class.lpfnWndProc = EventProcess;
+    window_class.hInstance = instance;
+    window_class.lpszClassName = B_CLASS_NAME;
+    RegisterClass(&window_class);
 #endif
-    m_mainCanvas = new BCanvas();
-    m_mainCanvas->show();
-    m_device = new BVulkanDevice({{}, instance, m_mainCanvas->getCanvasID()});
-    m_render = new BVulkanRender(m_device, m_mainCanvas);
-    m_renderSystem = new BVulkanRenderSystem(m_device, m_render->getSwapchainRenderPass());
+    main_canvas_ = new BCanvas();
+    main_canvas_->Show();
+    device_ = new BVulkanDevice({{}, instance, main_canvas_->GetCanvasID()});
+    render_ = new BVulkanRender(device_, main_canvas_);
+    render_system_ = new BVulkanRenderSystem(device_, render_->GetSwapchainRenderPass());
 
-    if (auto commandBuffer = m_render->beginFrame()) {
-        m_render->beginSwapchainRenderPass(commandBuffer);
-        m_renderSystem->renderObjects(commandBuffer, m_models);
-        m_render->endSwapchainRenderPass(commandBuffer);
-        m_render->endFrame();
+    if (auto command_buffer = render_->BeginFrame()) {
+        render_->BeginSwapchainRenderPass(command_buffer);
+        render_system_->RenderObjects(command_buffer, models_);
+        render_->EndSwapchainRenderPass(command_buffer);
+        render_->EndFrame();
     }
 }
 
 BApplication::~BApplication() {
-    if (m_mainCanvas)
-        delete m_mainCanvas;
+    if (main_canvas_)
+        delete main_canvas_;
 }
 
-LRESULT BApplication::eventProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+LRESULT BApplication::EventProcess(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
     auto* canvas = reinterpret_cast<BCanvas*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     if (canvas) {
         switch (msg) {
@@ -47,23 +47,23 @@ LRESULT BApplication::eventProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
                 return 0;
             }
             case WM_MOVE: {
-                auto x = static_cast<int32_t>(LOWORD(lParam));
-                auto y = static_cast<int32_t>(HIWORD(lParam));
-                canvas->moveEvent({x, y});
+                auto x = static_cast<int32_t>(LOWORD(l_param));
+                auto y = static_cast<int32_t>(HIWORD(l_param));
+                canvas->MoveEvent({x, y});
                 return 0;
             }
             case WM_SIZE: {
-                auto width = static_cast<uint32_t>(LOWORD(lParam));
-                auto height = static_cast<uint32_t>(HIWORD(lParam));
-                canvas->resizeEvent({width, height});
+                auto width = static_cast<uint32_t>(LOWORD(l_param));
+                auto height = static_cast<uint32_t>(HIWORD(l_param));
+                canvas->ResizeEvent({width, height});
                 return 0;
             }
         }
     }
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+    return DefWindowProc(hwnd, msg, w_param, l_param);
 }
 
-int BApplication::exec() {
+int BApplication::Exec() {
 #if defined(_WIN32)
     MSG msg = {};
     while (GetMessage(&msg, nullptr, 0, 0) > 0) {

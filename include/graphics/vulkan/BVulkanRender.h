@@ -26,25 +26,25 @@ public:
     BVulkanRender& operator=(BVulkanRender&& render) = delete;
 
 public:
-    const vk::RenderPass& getSwapchainRenderPass() const;
-    float getAspectRatio() const;
-    vk::CommandBuffer beginFrame();
-    void endFrame();
-    void beginSwapchainRenderPass(vk::CommandBuffer commandBuffer);
-    void endSwapchainRenderPass(vk::CommandBuffer commandBuffer);
+    const vk::RenderPass& GetSwapchainRenderPass() const;
+    float GetAspectRatio() const;
+    vk::CommandBuffer BeginFrame();
+    void EndFrame();
+    void BeginSwapchainRenderPass(vk::CommandBuffer command_buffer);
+    void EndSwapchainRenderPass(vk::CommandBuffer command_buffer);
 
 private:
-    void recreateSwapchain();
-    void createCommandBuffers();
-    void freeCommandBuffers();
-    bool isFrameInProgress() const;
-    vk::CommandBuffer getCurrentCommandBuffer() const;
+    void RecreateSwapchain();
+    void CreateCommandBuffers();
+    void FreeCommandBuffers();
+    bool IsFrameInProgress() const;
+    vk::CommandBuffer GetCurrentCommandBuffer() const;
 
 private:
-    BVulkanDevice* m_device{};
-    BGraphicsCanvas* m_canvas{};
-    std::vector<vk::CommandBuffer> m_commandBuffers{};
-    std::unique_ptr<BVulkanSwapchain> m_swapchain{};
-    uint32_t m_currentImageIndex{};
-    bool m_isFrameStarted{false};
+    BVulkanDevice* device_{};
+    BGraphicsCanvas* canvas_{};
+    std::vector<vk::CommandBuffer> command_buffers_{};
+    std::unique_ptr<BVulkanSwapchain> swapchain_{};
+    uint32_t current_image_index_{};
+    bool is_frame_started_{false};
 };

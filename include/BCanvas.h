@@ -24,30 +24,30 @@ public:
     BCanvas& operator=(BCanvas&& canvas) = default;
 
 public:
-    void show() const;
-    std::wstring title() const;
-    void setTitle(const std::wstring& title);
-    void move(const BPosition& pos, const BSize& size, bool repaint = false);
-    void move(const BPosition& pos, bool repaint = false);
-    void move(int32_t x, int32_t y, uint32_t width, uint32_t height, bool repaint = false);
-    void move(int32_t x, int32_t y, bool repaint = false);
-    void resize(const BSize& size, bool repaint = false);
-    void resize(uint32_t width, uint32_t height, bool repaint = false);
+    void Show() const;
+    std::wstring Title() const;
+    void SetTitle(const std::wstring& title);
+    void Move(const BPosition& pos, const BSize& size, bool repaint = false);
+    void Move(const BPosition& pos, bool repaint = false);
+    void Move(int32_t x, int32_t y, uint32_t width, uint32_t height, bool repaint = false);
+    void Move(int32_t x, int32_t y, bool repaint = false);
+    void Resize(const BSize& size, bool repaint = false);
+    void Resize(uint32_t width, uint32_t height, bool repaint = false);
 
 public:
-    void moveEvent(const BPosition& pos);
-    void resizeEvent(const BSize& size);
+    void MoveEvent(const BPosition& pos);
+    void ResizeEvent(const BSize& size);
 
-    virtual BCanvasID getCanvasID() const override;
-    virtual int width() const override;
-    virtual int height() const override;
-
-private:
-    BSize getMonitorSize() const;
+    virtual BCanvasID GetCanvasID() const override;
+    virtual int Width() const override;
+    virtual int Height() const override;
 
 private:
-    BCanvasID m_id{};
-    std::wstring m_title{};
-    BPosition m_position{};
-    BSize m_size{};
+    BSize GetMonitorSize() const;
+
+private:
+    BCanvasID id_{};
+    std::wstring title_{};
+    BPosition position_{};
+    BSize size_{};
 };

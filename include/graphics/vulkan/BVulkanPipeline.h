@@ -18,22 +18,22 @@ public:
     struct PipelineConfigInfo {
         PipelineConfigInfo() = default;
 
-        vk::PipelineViewportStateCreateInfo viewportInfo{};
-        vk::PipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
-        vk::PipelineRasterizationStateCreateInfo rasterizationInfo{};
-        vk::PipelineMultisampleStateCreateInfo multisampleInfo{};
-        vk::PipelineColorBlendAttachmentState colorBlendAttachment{};
-        vk::PipelineColorBlendStateCreateInfo colorBlendInfo{};
-        vk::PipelineDepthStencilStateCreateInfo depthStencilInfo{};
-        std::vector<vk::DynamicState> dynamicStates{};
-        vk::PipelineDynamicStateCreateInfo dynamicStateInfo{};
-        vk::PipelineLayout pipelineLayout{nullptr};
-        vk::RenderPass renderPass{nullptr};
-        uint32_t subpass{0};
+        vk::PipelineViewportStateCreateInfo viewport_info_{};
+        vk::PipelineInputAssemblyStateCreateInfo input_assembly_info_{};
+        vk::PipelineRasterizationStateCreateInfo rasterization_info_{};
+        vk::PipelineMultisampleStateCreateInfo multisample_info_{};
+        vk::PipelineColorBlendAttachmentState color_blend_attachment_{};
+        vk::PipelineColorBlendStateCreateInfo color_blend_info_{};
+        vk::PipelineDepthStencilStateCreateInfo depth_stencil_info_{};
+        std::vector<vk::DynamicState> dynamic_states_{};
+        vk::PipelineDynamicStateCreateInfo dynamic_state_info_{};
+        vk::PipelineLayout pipeline_layout_{nullptr};
+        vk::RenderPass render_pass_{nullptr};
+        uint32_t subpass_{0};
     };
 
 public:
-    BVulkanPipeline(BVulkanDevice* device, const std::string& vertShaderPath, const std::string& fragShaderPath, const PipelineConfigInfo& config);
+    BVulkanPipeline(BVulkanDevice* device, const std::string& vert_shader_path, const std::string& frag_shader_path, const PipelineConfigInfo& config);
     ~BVulkanPipeline();
     BVulkanPipeline(const BVulkanPipeline& pipeline) = delete;
     BVulkanPipeline(BVulkanPipeline&& pipeline) = delete;
@@ -41,17 +41,17 @@ public:
     BVulkanPipeline& operator=(BVulkanPipeline&& pipeline) = delete;
 
 public:
-    static PipelineConfigInfo defaultPipelineConfigInfo(vk::PrimitiveTopology primitiveTopology = vk::PrimitiveTopology::eTriangleList);
-    void bind(const vk::CommandBuffer& buffer);
+    static PipelineConfigInfo DefaultPipelineConfigInfo(vk::PrimitiveTopology primitive_topology = vk::PrimitiveTopology::eTriangleList);
+    void Bind(const vk::CommandBuffer& buffer);
 
 private:
-    void createGraphicsPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath, const PipelineConfigInfo& config);
-    static std::vector<char> readFile(const std::string& path);
-    vk::ShaderModule createShaderModule(const std::vector<char>& code);
+    void CreateGraphicsPipeline(const std::string& vert_shader_path, const std::string& frag_shader_path, const PipelineConfigInfo& config);
+    static std::vector<char> ReadFile(const std::string& path);
+    vk::ShaderModule CreateShaderModule(const std::vector<char>& code);
 
 private:
-    BVulkanDevice* m_device;
-    vk::Pipeline m_graphicsPipeline{};
-    vk::ShaderModule vertShaderModule{};
-    vk::ShaderModule fragShaderModule{};
+    BVulkanDevice* device_;
+    vk::Pipeline graphics_pipeline_{};
+    vk::ShaderModule vert_shader_module_{};
+    vk::ShaderModule frag_shader_module_{};
 };

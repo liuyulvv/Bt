@@ -10,95 +10,95 @@
 
 BCanvas::BCanvas() {
 #if defined(_WIN32)
-    m_id = CreateWindowEx(
+    id_ = CreateWindowEx(
         0,
         B_CLASS_NAME,
-        m_title.c_str(),
+        title_.c_str(),
         WS_OVERLAPPEDWINDOW,
-        m_position.x,
-        m_position.y,
-        m_size.width,
-        m_size.height,
+        position_.x_,
+        position_.y_,
+        size_.width_,
+        size_.height_,
         nullptr,
         nullptr,
         nullptr,
         nullptr);
-    if (!m_id) {
+    if (!id_) {
         throw std::runtime_error("Failed to create canvas");
     }
-    SetWindowLongPtr(m_id, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+    SetWindowLongPtr(id_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 #endif
-    auto size = getMonitorSize();
-    move({static_cast<int32_t>(size.width / 4), static_cast<int32_t>(size.height / 4)}, {size.width / 2, size.height / 2});
+    auto size = GetMonitorSize();
+    Move({static_cast<int32_t>(size.width_ / 4), static_cast<int32_t>(size.height_ / 4)}, {size.width_ / 2, size.height_ / 2});
 }
 
-void BCanvas::show() const {
+void BCanvas::Show() const {
 #if defined(_WIN32)
-    ShowWindow(m_id, 5);
+    ShowWindow(id_, 5);
 #endif
 }
 
-std::wstring BCanvas::title() const {
-    return m_title;
+std::wstring BCanvas::Title() const {
+    return title_;
 }
 
-void BCanvas::setTitle(const std::wstring& title) {
-    m_title = title;
+void BCanvas::SetTitle(const std::wstring& title) {
+    title_ = title;
 #if defined(_WIN32)
-    SetWindowText(m_id, m_title.c_str());
+    SetWindowText(id_, title_.c_str());
 #endif
 }
 
-void BCanvas::move(const BPosition& pos, const BSize& size, bool repaint) {
+void BCanvas::Move(const BPosition& pos, const BSize& size, bool repaint) {
 #if defined(_WIN32)
-    MoveWindow(m_id, pos.x, pos.y, size.width, size.height, repaint);
+    MoveWindow(id_, pos.x_, pos.y_, size.width_, size.height_, repaint);
 #endif
 }
 
-void BCanvas::move(const BPosition& pos, bool repaint) {
-    move(pos, m_size, repaint);
+void BCanvas::Move(const BPosition& pos, bool repaint) {
+    Move(pos, size_, repaint);
 }
 
-void BCanvas::move(int32_t x, int32_t y, uint32_t width, uint32_t height, bool repaint) {
-    move({x, y}, {width, height}, repaint);
+void BCanvas::Move(int32_t x, int32_t y, uint32_t width, uint32_t height, bool repaint) {
+    Move({x, y}, {width, height}, repaint);
 }
 
-void BCanvas::move(int32_t x, int32_t y, bool repaint) {
-    move({x, y}, repaint);
+void BCanvas::Move(int32_t x, int32_t y, bool repaint) {
+    Move({x, y}, repaint);
 }
 
-void BCanvas::resize(const BSize& size, bool repaint) {
-    move(m_position, size, repaint);
+void BCanvas::Resize(const BSize& size, bool repaint) {
+    Move(position_, size, repaint);
 }
 
-void BCanvas::resize(uint32_t width, uint32_t height, bool repaint) {
-    resize({width, height}, repaint);
+void BCanvas::Resize(uint32_t width, uint32_t height, bool repaint) {
+    Resize({width, height}, repaint);
 }
 
-void BCanvas::moveEvent(const BPosition& pos) {
-    m_position = pos;
+void BCanvas::MoveEvent(const BPosition& pos) {
+    position_ = pos;
 }
 
-void BCanvas::resizeEvent(const BSize& size) {
-    m_size = size;
+void BCanvas::ResizeEvent(const BSize& size) {
+    size_ = size;
 }
 
-BCanvasID BCanvas::getCanvasID() const {
-    return m_id;
+BCanvasID BCanvas::GetCanvasID() const {
+    return id_;
 }
 
-int BCanvas::width() const {
-    return m_size.width;
+int BCanvas::Width() const {
+    return size_.width_;
 }
 
-int BCanvas::height() const {
-    return m_size.height;
+int BCanvas::Height() const {
+    return size_.height_;
 }
 
-BSize BCanvas::getMonitorSize() const {
+BSize BCanvas::GetMonitorSize() const {
     BSize size{};
 #if defined(_WIN32)
-    auto monitor = MonitorFromWindow(m_id, MONITOR_DEFAULTTONEAREST);
+    auto monitor = MonitorFromWindow(id_, MONITOR_DEFAULTTONEAREST);
     MONITORINFOEX info;
     info.cbSize = sizeof(info);
     if (!GetMonitorInfo(monitor, &info))
@@ -108,8 +108,8 @@ BSize BCanvas::getMonitorSize() const {
     dm.dmDriverExtra = 0;
     if (!EnumDisplaySettings(info.szDevice, ENUM_CURRENT_SETTINGS, &dm))
         return size;
-    size.width = dm.dmPelsWidth;
-    size.height = dm.dmPelsHeight;
+    size.width_ = dm.dmPelsWidth;
+    size.height_ = dm.dmPelsHeight;
 #endif
     return size;
 }

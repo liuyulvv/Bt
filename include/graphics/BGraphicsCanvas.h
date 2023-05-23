@@ -18,7 +18,7 @@ public:
     BGraphicsCanvas& operator=(BGraphicsCanvas&& canvas) = default;
 
 public:
-    virtual BCanvasID getCanvasID() const = 0;
-    virtual int width() const = 0;
-    virtual int height() const = 0;
+    virtual BCanvasID GetCanvasID() const = 0;
+    virtual int Width() const = 0;
+    virtual int Height() const = 0;
 };

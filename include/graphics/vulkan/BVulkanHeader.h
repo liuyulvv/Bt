@@ -7,10 +7,17 @@
  */
 
 #if defined(_WIN32)
+
+#if !defined(UNICODE)
+#define UNICODE
+#endif  // UNICODE
+
 #if !defined(VK_USE_PLATFORM_WIN32_KHR)
 #define VK_USE_PLATFORM_WIN32_KHR
 #endif  // VK_USE_PLATFORM_WIN32_KHR
+
 #endif
+
 #include "vulkan/vulkan.hpp"
 
 #if !defined(GLM_FORCE_SILENT_WARNINGS)

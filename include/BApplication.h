@@ -6,8 +6,8 @@
  * @date 2023-04-28
  */
 
-#include "BPlatform.h"
 #include "BGraphicsVulkan.h"
+#include "BPlatform.h"
 
 class BCanvas;
 
@@ -22,18 +22,18 @@ public:
 
 #if defined(_WIN32)
 private:
-    static LRESULT CALLBACK eventProcess(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK EventProcess(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 #endif
 
 public:
-    int exec();
+    int Exec();
 
 private:
-    BCanvas* m_mainCanvas{};
+    BCanvas* main_canvas_{};
 
 private:
-    BVulkanDevice* m_device{};
-    BVulkanRender* m_render{};
-    std::vector<BVulkanModel> m_models{};
-    BVulkanRenderSystem* m_renderSystem{};
+    BVulkanDevice* device_{};
+    BVulkanRender* render_{};
+    std::vector<BVulkanModel> models_{};
+    BVulkanRenderSystem* render_system_{};
 };

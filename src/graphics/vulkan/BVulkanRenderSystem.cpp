@@ -9,37 +9,37 @@
 #include "BVulkanDevice.h"
 #include "BVulkanPipeline.h"
 
-BVulkanRenderSystem::BVulkanRenderSystem(BVulkanDevice* device, const vk::RenderPass& renderPass) : m_device(device) {
-    createPipelineLayout();
-    m_pipelineLine = createPipeline("shaders/shader.vert.spv", "shaders/shader.frag.spv", vk::PrimitiveTopology::eTriangleList, renderPass);
+BVulkanRenderSystem::BVulkanRenderSystem(BVulkanDevice* device, const vk::RenderPass& render_pass) : device_(device) {
+    CreatePipelineLayout();
+    pipeline_ = CreatePipeline("shaders/shader.vert.spv", "shaders/shader.frag.spv", vk::PrimitiveTopology::eTriangleList, render_pass);
 }
 
 BVulkanRenderSystem::~BVulkanRenderSystem() {
-    m_device->device().destroyPipelineLayout(m_pipelineLayout);
-    m_pipelineLine.reset();
+    device_->Device().destroyPipelineLayout(pipeline_layout_);
+    pipeline_.reset();
 }
 
-void BVulkanRenderSystem::renderObjects(vk::CommandBuffer& commandBuffer, const std::vector<BVulkanModel>& models) {
-    m_pipelineLine->bind(commandBuffer);
+void BVulkanRenderSystem::RenderObjects(vk::CommandBuffer& command_buffer, const std::vector<BVulkanModel>& models) {
+    pipeline_->Bind(command_buffer);
     for (auto& model : models) {
-        model.bind(commandBuffer);
-        model.draw(commandBuffer);
+        model.Bind(command_buffer);
+        model.Draw(command_buffer);
     }
 }
 
-void BVulkanRenderSystem::createPipelineLayout() {
-    vk::PipelineLayoutCreateInfo pipelineInfo{};
-    pipelineInfo
+void BVulkanRenderSystem::CreatePipelineLayout() {
+    vk::PipelineLayoutCreateInfo pipeline_info{};
+    pipeline_info
         .setSetLayoutCount(0)
         .setPSetLayouts(nullptr)
         .setPushConstantRangeCount(0)
         .setPushConstantRanges(nullptr);
-    m_pipelineLayout = m_device->device().createPipelineLayout(pipelineInfo);
+    pipeline_layout_ = device_->Device().createPipelineLayout(pipeline_info);
 }
 
-std::unique_ptr<BVulkanPipeline> BVulkanRenderSystem::createPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath, vk::PrimitiveTopology primitiveTopology, const vk::RenderPass& renderPass) {
-    auto pipelineConfig = BVulkanPipeline::defaultPipelineConfigInfo(primitiveTopology);
-    pipelineConfig.renderPass = renderPass;
-    pipelineConfig.pipelineLayout = m_pipelineLayout;
-    return std::make_unique<BVulkanPipeline>(m_device, vertShaderPath, fragShaderPath, pipelineConfig);
+std::unique_ptr<BVulkanPipeline> BVulkanRenderSystem::CreatePipeline(const std::string& vert_shader_path, const std::string& frag_shader_path, vk::PrimitiveTopology primitive_topology, const vk::RenderPass& render_pass) {
+    auto pipeline_config = BVulkanPipeline::DefaultPipelineConfigInfo(primitive_topology);
+    pipeline_config.render_pass_ = render_pass;
+    pipeline_config.pipeline_layout_ = pipeline_layout_;
+    return std::make_unique<BVulkanPipeline>(device_, vert_shader_path, frag_shader_path, pipeline_config);
 }

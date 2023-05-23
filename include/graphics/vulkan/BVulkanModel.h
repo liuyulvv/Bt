@@ -16,11 +16,11 @@ class BVulkanDevice;
 class BVulkanModel {
 public:
     struct Vertex {
-        glm::vec3 position;
-        glm::vec4 color;
+        glm::vec3 position_;
+        glm::vec4 color_;
         bool operator==(const Vertex& other) const;
-        static std::vector<vk::VertexInputBindingDescription> getBindingDescriptions();
-        static std::vector<vk::VertexInputAttributeDescription> getAttributeDescriptions();
+        static std::vector<vk::VertexInputBindingDescription> GetBindingDescriptions();
+        static std::vector<vk::VertexInputAttributeDescription> GetAttributeDescriptions();
     };
 
 public:
@@ -32,15 +32,15 @@ public:
     BVulkanModel& operator=(BVulkanModel&& model) = default;
 
 public:
-    void bind(vk::CommandBuffer& commandBuffer) const;
-    void draw(vk::CommandBuffer& commandBuffer) const;
+    void Bind(vk::CommandBuffer& command_buffer) const;
+    void Draw(vk::CommandBuffer& command_buffer) const;
 
 private:
-    void createVertexBuffer(const std::vector<Vertex>& vertices);
+    void CreateVertexBuffer(const std::vector<Vertex>& vertices);
 
 private:
-    BVulkanDevice* m_device{};
-    vk::Buffer m_vertexBuffer{};
-    vk::DeviceMemory m_vertexBufferMemory{};
-    uint32_t m_vertexCount{0};
+    BVulkanDevice* device_{};
+    vk::Buffer vertex_buffer_{};
+    vk::DeviceMemory vertex_buffer_memory_{};
+    uint32_t vertex_count_{0};
 };

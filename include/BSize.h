@@ -9,6 +9,6 @@
 #include <cstdint>
 
 struct BSize {
-    uint32_t width{0};
-    uint32_t height{0};
+    uint32_t width_{0};
+    uint32_t height_{0};
 };

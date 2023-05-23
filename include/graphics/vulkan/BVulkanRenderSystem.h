@@ -16,7 +16,7 @@ class BVulkanPipeline;
 
 class BVulkanRenderSystem {
 public:
-    BVulkanRenderSystem(BVulkanDevice* device, const vk::RenderPass& renderPass);
+    BVulkanRenderSystem(BVulkanDevice* device, const vk::RenderPass& render_pass);
     ~BVulkanRenderSystem();
     BVulkanRenderSystem(const BVulkanRenderSystem& system) = delete;
     BVulkanRenderSystem(BVulkanRenderSystem&& system) = delete;
@@ -24,14 +24,14 @@ public:
     BVulkanRenderSystem& operator=(BVulkanRenderSystem&& system) = delete;
 
 public:
-    void renderObjects(vk::CommandBuffer& commandBuffer, const std::vector<BVulkanModel>& models);
+    void RenderObjects(vk::CommandBuffer& command_buffer, const std::vector<BVulkanModel>& models);
 
 private:
-    void createPipelineLayout();
-    std::unique_ptr<BVulkanPipeline> createPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath, vk::PrimitiveTopology primitiveTopology, const vk::RenderPass& renderPass);
+    void CreatePipelineLayout();
+    std::unique_ptr<BVulkanPipeline> CreatePipeline(const std::string& vert_shader_path, const std::string& frag_shader_path, vk::PrimitiveTopology primitive_topology, const vk::RenderPass& render_pass);
 
 private:
-    BVulkanDevice* m_device;
-    vk::PipelineLayout m_pipelineLayout{};
-    std::unique_ptr<BVulkanPipeline> m_pipelineLine{};
+    BVulkanDevice* device_;
+    vk::PipelineLayout pipeline_layout_{};
+    std::unique_ptr<BVulkanPipeline> pipeline_{};
 };

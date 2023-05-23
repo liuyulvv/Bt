@@ -8,5 +8,5 @@
 
 int main() {
     BApplication app;
-    return app.exec();
+    return app.Exec();
 }

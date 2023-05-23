@@ -11,62 +11,62 @@
 
 #include "BVulkanDevice.h"
 
-std::vector<vk::VertexInputBindingDescription> BVulkanModel::Vertex::getBindingDescriptions() {
-    std::vector<vk::VertexInputBindingDescription> bindingDescriptions(1);
-    bindingDescriptions.at(0)
+std::vector<vk::VertexInputBindingDescription> BVulkanModel::Vertex::GetBindingDescriptions() {
+    std::vector<vk::VertexInputBindingDescription> binding_descriptions(1);
+    binding_descriptions.at(0)
         .setBinding(0)
         .setStride(sizeof(Vertex))
         .setInputRate(vk::VertexInputRate::eVertex);
-    return bindingDescriptions;
+    return binding_descriptions;
 }
 
-std::vector<vk::VertexInputAttributeDescription> BVulkanModel::Vertex::getAttributeDescriptions() {
-    std::vector<vk::VertexInputAttributeDescription> attributeDescriptions{};
-    attributeDescriptions.push_back({0, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(BVulkanModel::Vertex, position))});
-    attributeDescriptions.push_back({1, 0, vk::Format::eR32G32B32A32Sfloat, static_cast<uint32_t>(offsetof(BVulkanModel::Vertex, color))});
-    return attributeDescriptions;
+std::vector<vk::VertexInputAttributeDescription> BVulkanModel::Vertex::GetAttributeDescriptions() {
+    std::vector<vk::VertexInputAttributeDescription> attribute_descriptions{};
+    attribute_descriptions.push_back({0, 0, vk::Format::eR32G32B32Sfloat, static_cast<uint32_t>(offsetof(BVulkanModel::Vertex, position_))});
+    attribute_descriptions.push_back({1, 0, vk::Format::eR32G32B32A32Sfloat, static_cast<uint32_t>(offsetof(BVulkanModel::Vertex, color_))});
+    return attribute_descriptions;
 }
 
-BVulkanModel::BVulkanModel(BVulkanDevice* device, const std::vector<BVulkanModel::Vertex>& vertices) : m_device(device) {
-    createVertexBuffer(vertices);
+BVulkanModel::BVulkanModel(BVulkanDevice* device, const std::vector<BVulkanModel::Vertex>& vertices) : device_(device) {
+    CreateVertexBuffer(vertices);
 }
 
 BVulkanModel::~BVulkanModel() {
-    m_device->device().waitIdle();
-    m_device->device().destroyBuffer(m_vertexBuffer);
-    m_device->device().freeMemory(m_vertexBufferMemory);
+    device_->Device().waitIdle();
+    device_->Device().destroyBuffer(vertex_buffer_);
+    device_->Device().freeMemory(vertex_buffer_memory_);
 }
 
-void BVulkanModel::bind(vk::CommandBuffer& commandBuffer) const {
-    std::array<vk::Buffer, 1> buffers{m_vertexBuffer};
-    commandBuffer.bindVertexBuffers(0, buffers, {0});
+void BVulkanModel::Bind(vk::CommandBuffer& command_buffer) const {
+    std::array<vk::Buffer, 1> buffers{vertex_buffer_};
+    command_buffer.bindVertexBuffers(0, buffers, {0});
 }
 
-void BVulkanModel::draw(vk::CommandBuffer& commandBuffer) const {
-    commandBuffer.draw(m_vertexCount, 1, 0, 0);
+void BVulkanModel::Draw(vk::CommandBuffer& command_buffer) const {
+    command_buffer.draw(vertex_count_, 1, 0, 0);
 }
 
-void BVulkanModel::createVertexBuffer(const std::vector<Vertex>& vertices) {
-    m_vertexCount = static_cast<uint32_t>(vertices.size());
-    vk::DeviceSize bufferSize = sizeof(vertices[0]) * m_vertexCount;
-    vk::Buffer stagingBuffer{};
-    vk::DeviceMemory stagingBufferMemory{};
-    m_device->createBuffer(
-        bufferSize,
+void BVulkanModel::CreateVertexBuffer(const std::vector<Vertex>& vertices) {
+    vertex_count_ = static_cast<uint32_t>(vertices.size());
+    vk::DeviceSize buffer_size = sizeof(vertices[0]) * vertex_count_;
+    vk::Buffer staging_buffer{};
+    vk::DeviceMemory staging_buffer_memory{};
+    device_->CreateBuffer(
+        buffer_size,
         vk::BufferUsageFlagBits::eTransferSrc,
         vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        stagingBuffer,
-        stagingBufferMemory);
-    auto* data = m_device->device().mapMemory(stagingBufferMemory, 0, bufferSize);
-    memcpy(data, vertices.data(), bufferSize);
-    m_device->device().unmapMemory(stagingBufferMemory);
-    m_device->createBuffer(
-        bufferSize,
+        staging_buffer,
+        staging_buffer_memory);
+    auto* data = device_->Device().mapMemory(staging_buffer_memory, 0, buffer_size);
+    memcpy(data, vertices.data(), buffer_size);
+    device_->Device().unmapMemory(staging_buffer_memory);
+    device_->CreateBuffer(
+        buffer_size,
         vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
         vk::MemoryPropertyFlagBits::eDeviceLocal,
-        m_vertexBuffer,
-        m_vertexBufferMemory);
-    m_device->copyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
-    m_device->device().destroyBuffer(stagingBuffer);
-    m_device->device().freeMemory(stagingBufferMemory);
+        vertex_buffer_,
+        vertex_buffer_memory_);
+    device_->CopyBuffer(staging_buffer, vertex_buffer_, buffer_size);
+    device_->Device().destroyBuffer(staging_buffer);
+    device_->Device().freeMemory(staging_buffer_memory);
 }
